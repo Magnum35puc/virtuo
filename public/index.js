@@ -23,16 +23,16 @@ const cars = [{
 //list of current rentals
 //useful for ALL steps
 //the time is hour
-//The `price` is updated from step 1 and 2
-//The `commission` is updated from step 3
-//The `options` is useful for step 4
+//The price is updated from step 1 and 2
+//The commission is updated from step 3
+//The options is useful for step 4
 const rentals = [{
   'id': '893a04a3-e447-41fe-beec-9a6bfff6fdb4',
   'driver': {
     'firstName': 'Roman',
     'lastName': 'Frayssinet'
   },
-  'carId': 'f944a3ff-591b-4d5b-9b67-c7e08cba9791',
+  'carId': 'a9c1b91b-5e3d-4cec-a3cb-ef7eebb4892e',
   'pickupDate': '2020-01-02',
   'returnDate': '2020-01-02',
   'distance': 100,
@@ -73,6 +73,7 @@ const rentals = [{
   'carId': '4afcc3a2-bbf4-44e8-b739-0179a6cd8b7d',
   'pickupDate': '2019-12-01',
   'returnDate': '2019-12-15',
+  'distance': 198,
   'options': {
     'deductibleReduction': true
   },
@@ -157,6 +158,68 @@ const actors = [{
   }]
 }];
 
+function calculPrix(array, rentals, cars)
+{
+  for (var i = 0; i < rentals.length; i++)
+  {
+    var nombreJours = differenceDates(rentals[i].pickupDate, rentals[i].returnDate);
+    var car = 0;
+    for (var j = 0; j < cars.length; j++)
+    {
+      if (cars[j].id == rentals[i].carId) 
+      {
+        car = j;
+      }
+    }
+    var prixJours = nombreJours*cars[car].pricePerDay;
+    var prixDistance = cars[car].pricePerKm*rentals[i].distance;
+    var total = prixJours + prixDistance;
+    if (nombreJours >= 10) 
+    {
+      total = total * 0.5;
+    }
+    else if (nombreJours >= 4) 
+    {
+      total = total * 0.7
+    }
+    else if (nombreJours >= 1) 
+    {
+      total = total * 0.9
+    }
+    array.push(total);
+  }
+}
+
+function differenceDates(date1, date2)
+{
+  var dayStart = parseInt(date1.split('-')[2], 10);
+  var dayEnd = parseInt(date2.split('-')[2], 10);
+  return dayEnd-dayStart+1;
+}
+
+function repartitionCom(arrayrep, rentalprice){
+	var Com = rentalprice * 0.3;
+	var insurance = Com / 2;
+	var treasury = 1 // a mettre par jour
+	var Virtuo = Com - insurance-treasury
+	var repart = []
+	repart.push(insurance)
+	repart.push(treasury)
+	repart.push(Virtuo)
+	return repart
+}
+
+var array = []
+var arrayrep = []
+calculPrix(array, rentals, cars)
+for (var i = 0; i < array.length; i++){
+	arrayrep.push(repartitionCom(array[i]))
+}
+
+
+
+console.log(array)
+console.log(arrayrep)
 console.log(cars);
 console.log(rentals);
 console.log(actors);
