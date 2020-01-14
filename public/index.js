@@ -197,24 +197,39 @@ function differenceDates(date1, date2)
   return dayEnd-dayStart+1;
 }
 
-function repartitionCom(arrayrep, rentalprice){
-	var Com = rentalprice * 0.3;
-	var insurance = Com / 2;
-	var treasury = 1 // a mettre par jour
-	var Virtuo = Com - insurance-treasury
+function repartitionCom(arrayrep, array, rentals, cars){
 	var repart = []
-	repart.push(insurance)
-	repart.push(treasury)
-	repart.push(Virtuo)
+	for (var i = 0; i < array.length; i++){
+		var rentalprice = array[i]
+		var days = differenceDates(rentals[i].pickupDate,rentals[i].returnDate)
+		var Com = rentalprice * 0.3;
+		var insurance = Com / 2;
+		var treasury = 1*days
+		var Virtuo = Com - insurance-treasury
+		if(rentals[i].options.deductibleReduction == true){
+			Virtuo += 4*days
+		}
+		repart.push(insurance)
+		repart.push(treasury)
+		repart.push(Virtuo)
+	}
 	return repart
 }
 
-var array = []
-var arrayrep = []
-calculPrix(array, rentals, cars)
-for (var i = 0; i < array.length; i++){
-	arrayrep.push(repartitionCom(array[i]))
+function paiementacteurs(arrayrep,actors,array){
+	for (var i = 0; i < arrayrep.length; i+3) {
+		actors[i].payment[0].amount = 25
+		actors[i].payment[2].amount=arrayrep[i]
+		actors[i].payment[3].amount=arrayrep[i+1]
+		actors[i].payment[4].amount=arrayrep[i+2]
+	}
 }
+
+var array = []
+calculPrix(array, rentals, cars)
+var arrayrep = repartitionCom(arrayrep, array,rentals,cars)
+paiementacteurs(arrayrep,actors,array)
+
 
 
 
