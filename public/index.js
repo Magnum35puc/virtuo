@@ -216,12 +216,24 @@ function repartitionCom(arrayrep, array, rentals, cars){
 	return repart
 }
 
-function paiementacteurs(arrayrep,actors,array){
+function paiementacteurs(arrayrep,actors,array,rentals){
 	for (var i = 0; i < arrayrep.length; i+3) {
-		actors[i].payment[0].amount = 25
-		actors[i].payment[2].amount=arrayrep[i]
-		actors[i].payment[3].amount=arrayrep[i+1]
-		actors[i].payment[4].amount=arrayrep[i+2]
+		for (var j = 0; j < actors.length; j++) {	
+		actors[j].payment[1].amount=arrayrep[i]
+		actors[j].payment[2].amount=arrayrep[i+1]
+		actors[j].payment[3].amount=arrayrep[i+2]
+	}
+	}
+	for (var i = 0; i < array.length; i++) {
+		var rentalprice = array[i]
+		var days = differenceDates(rentals[i].pickupDate,rentals[i].returnDate)
+		if(rentals[i].options.deductibleReduction == true){
+
+		actors[i].payment[0].amount = array[i]+4*days
+	}
+		else{
+		actors[i].payment[0].amount = array[i]			
+		}
 	}
 }
 
@@ -229,9 +241,6 @@ var array = []
 calculPrix(array, rentals, cars)
 var arrayrep = repartitionCom(arrayrep, array,rentals,cars)
 paiementacteurs(arrayrep,actors,array)
-
-
-
 
 console.log(array)
 console.log(arrayrep)
